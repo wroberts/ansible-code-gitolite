@@ -11,11 +11,33 @@
   To support =amor= (which has =gcc= installed), we would additionally
   need to get git working.
 
+* Dependencies
+
+  sudo apt install ansible ansible-lint vagrant
+
+* vagrant for testing
+
+  vagrant up
+
+  vagrant ssh-config
+
+  IP is dynamic, user is vagrant
+
+  vagrant ssh
+  sudo -s
+  apt install git
+  adduser robertsw
+  logout
+
+  ssh-copy-id -i ~/.ssh/id_rsa.pub robertsw@192.168.121.71
+
+  vagrant destroy
+
 * Setup virtualbox for testing
 
   http://www.brianlinkletter.com/installing-debian-linux-in-a-virtualbox-virtual-machine/
 
-  setup 
+  setup
 
   hostname: amor2
   root pwd: root
@@ -25,7 +47,7 @@
   install only ssh server and standard system utilities
 
   stop machine
-  
+
   virtualbox: network settings
   Open Tab: Adapter 1
   Enable the Adapter and select “NAT”
@@ -63,41 +85,41 @@
 
   #+BEGIN_EXAMPLE
   $ ansible-playbook amor2.yml
-  
+
   PLAY [all] *********************************************************************
-  
+
   TASK [Gathering Facts] *********************************************************
   ok: [192.168.99.100]
-  
+
   TASK [Create local directory] **************************************************
   ok: [192.168.99.100] => (item=.gitolite/logs)
   ok: [192.168.99.100] => (item=.ssh)
   changed: [192.168.99.100] => (item=local/src)
   changed: [192.168.99.100] => (item=local/bin)
-  
+
   TASK [Download and extract gitolite release] ***********************************
   changed: [192.168.99.100]
-  
+
   TASK [Install gitolite] ********************************************************
   changed: [192.168.99.100]
-  
+
   TASK [Copy public key] *********************************************************
   changed: [192.168.99.100]
-  
+
   TASK [Setup gitolite] **********************************************************
   changed: [192.168.99.100]
-  
+
   PLAY RECAP *********************************************************************
-  192.168.99.100             : ok=6    changed=5    unreachable=0    failed=0   
+  192.168.99.100             : ok=6    changed=5    unreachable=0    failed=0
   #+END_EXAMPLE
-  
+
   After that, we can access the gitolite using our gitolite SSH key:
-  
+
   #+BEGIN_EXAMPLE
   $ ssh -i ~/.ssh/gitolite_rsa.pub robertsw@192.168.99.100
   PTY allocation request failed on channel 0
   hello gitolite_rsa, this is robertsw@amor2 running gitolite3 (unknown) on git 2.20.1
-  
+
   R W	gitolite-admin
   R W	testing
   Connection to 192.168.99.100 closed.
