@@ -15,6 +15,7 @@
       lineinfile:
         path: "{{ homedir }}/.bashrc"
         line: "{{ item }}"
+        create: yes
       loop:
         - 'export PATH=$HOME/local/bin:$PATH'
         - 'export CPPFLAGS=-I$HOME/local/include'

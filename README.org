@@ -3,7 +3,15 @@
 * Ansible
 
   A little project to start learning ansible.  This project contains a
-  playbook to set up gitolite on a server (like amor).
+  playbook to set up gitolite on a server (like =amor= and =code=).
+
+  This project would currently work perfectly for =code=, which
+  already has =git= set up.
+
+  To support =amor= (which has =gcc= installed), we would additionally
+  need to get git working.
+
+* Setup virtualbox for testing
 
   http://www.brianlinkletter.com/installing-debian-linux-in-a-virtualbox-virtual-machine/
 
@@ -48,10 +56,6 @@
   ssh-copy-id -i ~/.ssh/id_rsa.pub robertsw@192.168.99.100
 
   then ansible --list all should work
-
-* Bad idea
-
-  doesn't work?: docker run -d debian:stretch --init --name amor2
 
 * How to run
 
@@ -108,3 +112,7 @@
   gitolite-admin
   testing
   #+END_EXAMPLE
+
+* Bad idea
+
+  doesn't work?: docker run -d debian:stretch --init --name amor2
