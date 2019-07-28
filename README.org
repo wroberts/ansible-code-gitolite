@@ -1,0 +1,110 @@
+#+STARTUP: content hidestars odd
+
+* Ansible
+
+  A little project to start learning ansible.  This project contains a
+  playbook to set up gitolite on a server (like amor).
+
+  http://www.brianlinkletter.com/installing-debian-linux-in-a-virtualbox-virtual-machine/
+
+  setup 
+
+  hostname: amor2
+  root pwd: root
+  user: robertsw
+  pwd: Queens
+
+  install only ssh server and standard system utilities
+
+  stop machine
+  
+  virtualbox: network settings
+  Open Tab: Adapter 1
+  Enable the Adapter and select “NAT”
+  Open Tab: Adapter 2
+  Enable the adapter and select: “Host-only Adapter”
+  Select Name: “VirtualBox Host-only Ethernet Adapter”
+  Click at “Extended”
+  Select the adapter: “Intel PRO/1000 MT Desktop…”
+  Select the modus: “Allow all and host”
+  Click on “Ok” to save all settings.
+
+  start machine, log in as root
+
+  apt install net-tools git
+  ifconfig
+
+  nano /etc/network/interfaces, add lines:
+
+  allow-hotplug enp0s8
+  iface enp0s8 inet dhcp
+
+  reboot the machine, log in as root, ifconfig
+
+  IP 192.168.99.100
+
+  log out, from terminal:
+
+  ssh-copy-id -i ~/.ssh/id_rsa.pub robertsw@192.168.99.100
+
+  then ansible --list all should work
+
+* Bad idea
+
+  doesn't work?: docker run -d debian:stretch --init --name amor2
+
+* How to run
+
+  Run the playbook:
+
+  #+BEGIN_EXAMPLE
+  $ ansible-playbook amor2.yml
+  
+  PLAY [all] *********************************************************************
+  
+  TASK [Gathering Facts] *********************************************************
+  ok: [192.168.99.100]
+  
+  TASK [Create local directory] **************************************************
+  ok: [192.168.99.100] => (item=.gitolite/logs)
+  ok: [192.168.99.100] => (item=.ssh)
+  changed: [192.168.99.100] => (item=local/src)
+  changed: [192.168.99.100] => (item=local/bin)
+  
+  TASK [Download and extract gitolite release] ***********************************
+  changed: [192.168.99.100]
+  
+  TASK [Install gitolite] ********************************************************
+  changed: [192.168.99.100]
+  
+  TASK [Copy public key] *********************************************************
+  changed: [192.168.99.100]
+  
+  TASK [Setup gitolite] **********************************************************
+  changed: [192.168.99.100]
+  
+  PLAY RECAP *********************************************************************
+  192.168.99.100             : ok=6    changed=5    unreachable=0    failed=0   
+  #+END_EXAMPLE
+  
+  After that, we can access the gitolite using our gitolite SSH key:
+  
+  #+BEGIN_EXAMPLE
+  $ ssh -i ~/.ssh/gitolite_rsa.pub robertsw@192.168.99.100
+  PTY allocation request failed on channel 0
+  hello gitolite_rsa, this is robertsw@amor2 running gitolite3 (unknown) on git 2.20.1
+  
+  R W	gitolite-admin
+  R W	testing
+  Connection to 192.168.99.100 closed.
+  #+END_EXAMPLE
+
+  We can also verify that paths are set up and repos are visible to
+  gitolite on the command line:
+
+  #+BEGIN_EXAMPLE
+  $ ansible -m shell -a "local/bin/gitolite list-repos" all
+  192.168.99.100 | SUCCESS | rc=0 >>
+  gitolite-admin
+  testing
+  #+END_EXAMPLE
