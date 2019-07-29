@@ -39,9 +39,13 @@
     - name: "Configure git"
       command: ./configure --prefix="{{ homedir }}/local" chdir="{{ homedir }}/local/src/git-2.9.5" creates="{{ homedir }}/local/src/git-2.9.5/config.log"
     - name: "Make git"
-      command: make chdir="{{ homedir }}/local/src/git-2.9.5" creates="{{ homedir }}/local/src/git-2.9.5/git"
+      make:
+        chdir: "{{ homedir }}/local/src/git-2.9.5"
+        target: all
     - name: "Install git"
-      command: make install chdir="{{ homedir }}/local/src/git-2.9.5" creates="{{ homedir }}/local/bin/git"
+      make:
+        chdir: "{{ homedir }}/local/src/git-2.9.5"
+        target: install
 - hosts: all
   environment:
     PATH: "{{ homedir }}/local/bin:{{ ansible_env.PATH }}"
