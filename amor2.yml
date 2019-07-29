@@ -38,11 +38,7 @@
         creates: "{{ homedir }}/local/src/git-2.9.5/README.md"
     - name: "Configure git"
       command: ./configure --prefix="{{ homedir }}/local" chdir="{{ homedir }}/local/src/git-2.9.5" creates="{{ homedir }}/local/src/git-2.9.5/config.log"
-    - name: "Make git"
-      make:
-        chdir: "{{ homedir }}/local/src/git-2.9.5"
-        target: all
-    - name: "Install git"
+    - name: "Make and install git"
       make:
         chdir: "{{ homedir }}/local/src/git-2.9.5"
         target: install
