@@ -33,6 +33,12 @@
 
   vagrant destroy
 
+  To test gcc building of git:
+
+  apt install build-essential libz-dev gettext
+
+  wget https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.9.5.tar.xz
+
 * Setup virtualbox for testing
 
   http://www.brianlinkletter.com/installing-debian-linux-in-a-virtualbox-virtual-machine/

@@ -22,12 +22,47 @@
         - 'export LDFLAGS="-L$HOME/local/lib -Wl,-rpath -Wl,$HOME/local/lib"'
         - 'export PKG_CONFIG_PATH="$HOME/local/lib/pkgconfig"'
         - 'export MANPATH=$HOME/local/man:$HOME/local/share/man:$MANPATH'
+- hosts: all
+  environment:
+    PATH: "{{ homedir }}/local/bin:{{ ansible_env.PATH }}"
+    CPPFLAGS: "-I{{ homedir }}/local/include"
+    LDFLAGS: "-L{{ homedir }}/local/lib -Wl,-rpath -Wl,{{ homedir }}/local/lib"
+    PKG_CONFIG_PATH: "{{ homedir }}/local/lib/pkgconfig"
+    MANPATH: "{{ homedir }}/local/man:{{ homedir }}/local/share/man:{{ ansible_env.MANPATH }}"
+  tasks:
+    - name: "Download and extract git release"
+      unarchive:
+        src: https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.9.5.tar.xz
+        remote_src: yes
+        dest: "{{ homedir }}/local/src"
+        creates: "{{ homedir }}/local/src/git-2.9.5/README.md"
+    - name: "Configure git"
+      command: ./configure --prefix="{{ homedir }}/local" chdir="{{ homedir }}/local/src/git-2.9.5" creates="{{ homedir }}/local/src/git-2.9.5/config.log"
+    - name: "Make git"
+      command: make chdir="{{ homedir }}/local/src/git-2.9.5" creates="{{ homedir }}/local/src/git-2.9.5/git"
+    - name: "Install git"
+      command: make install chdir="{{ homedir }}/local/src/git-2.9.5" creates="{{ homedir }}/local/bin/git"
+- hosts: all
+  environment:
+    PATH: "{{ homedir }}/local/bin:{{ ansible_env.PATH }}"
+    LANG: "C.UTF-8"
+  tasks:
     - name: "Download and extract gitolite release"
       unarchive:
         src: https://github.com/sitaramc/gitolite/archive/v3.6.11.tar.gz
         remote_src: yes
         dest: "{{ homedir }}/local/src"
         creates: "{{ homedir }}/local/src/gitolite-3.6.11/README.markdown"
+    - name: "Hack gitolite to modify LANG"
+      lineinfile:
+        path: "{{ homedir }}/local/src/gitolite-3.6.11/src/gitolite-shell"
+        insertafter: "#!/usr/bin/perl"
+        line: 'BEGIN { $ENV{LANG} = "C.UTF-8"; }'
+    - name: "Hack gitolite to modify PATH"
+      lineinfile:
+        path: "{{ homedir }}/local/src/gitolite-3.6.11/src/gitolite-shell"
+        insertafter: "#!/usr/bin/perl"
+        line: 'BEGIN { $ENV{PATH} = "{{ homedir }}/local/bin:$ENV{PATH}"; }'
     - name: "Install gitolite"
       command: ./install -ln "{{ homedir }}/local/bin" chdir="{{ homedir }}/local/src/gitolite-3.6.11" creates="{{ homedir }}/local/bin/gitolite"
     - name: "Copy public key"

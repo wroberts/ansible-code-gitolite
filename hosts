@@ -1,2 +1,2 @@
 #192.168.99.100 ansible_user=robertsw homedir=/home/robertsw
-192.168.121.71 ansible_ssh_user=vagrant ansible_ssh_private_key_file=/home/wroberts/dev/ansible-code-gitolite/.vagrant/machines/default/libvirt/private_key homedir=/home/vagrant
+192.168.121.142 ansible_ssh_user=vagrant ansible_ssh_private_key_file=/home/wroberts/dev/ansible-code-gitolite/.vagrant/machines/default/libvirt/private_key homedir=/home/vagrant
